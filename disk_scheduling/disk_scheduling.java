@@ -1,7 +1,9 @@
+package disk_scheduling;
+
 import java.util.Scanner;
 import java.util.Random;
 import java.lang.*;
-import java.io.File;
+import java.io.*;
 
 public class disk_scheduling {
     static final int MAX_CYLINDERS = 5000;
@@ -56,12 +58,12 @@ public class disk_scheduling {
                     System.out.println("Enter the name of a file: ");
                     try {
                         fileName = input.nextLine();
-                        File fileObj = new File("input.txt");
+                        File fileObj = new File("C:\\Users\\bruhe\\Documents\\os_hw\\CS4310_Project_Two\\disk_scheduling\\" + fileName);
                         Scanner fileReader = new Scanner(fileObj);
                         requestArrSize = 0;     // Reset requestArr Size
                         int idx = 0;
-                        while(fileReader.hasNextInt()) {
-                            requestsArr[idx] = fileReader.nextInt();
+                        while(fileReader.hasNext()) {
+                            requestsArr[idx] = Integer.parseInt(fileReader.nextLine());
                             idx++;
                             requestArrSize++;
                         }
