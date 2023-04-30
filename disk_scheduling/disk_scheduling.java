@@ -107,6 +107,7 @@ public class disk_scheduling {
                             fcfs(initialPos, requestsArr, requestArrSize);
                             break;
                         case 2:
+                            sstf(initialPos, requestsArr, requestArrSize);
                             break;
                         case 3:
                             break;
@@ -141,20 +142,78 @@ public class disk_scheduling {
             System.out.println(starting_position + " ---> " + currentDestination);
             if(starting_position > currentDestination) {
                 if(!leftMove) {
+                    System.out.println("Turn occurred");
                     turnNum++;
+                    leftMove = true;
                 }
                 for(int j = starting_position; j > currentDestination; j--) {
                     trackDist++;
                 }
             } else if(starting_position < currentDestination) {
                 if(leftMove) {
+                    System.out.println("Turn occurred");
                     turnNum++;
+                    leftMove = false;
                 }
                 for(int j = starting_position; j < currentDestination; j++) {
                     trackDist++;
                 }
             }
             starting_position = currentDestination;
+        }
+
+        System.out.println("Total Distance: " + trackDist);
+        System.out.println("Total Direction Changes: " + turnNum);
+    }
+
+    public static void sstf(int starting_position, int[] requests, int size) {
+        int trackDist = 0;
+        int turnNum = 0;
+        int currentDestination = 0;
+        boolean leftMove = false;
+        int nextIdx = 0;
+        int[] tempArr = new int[size];
+        System.arraycopy(requests, 0, tempArr, 0, size);
+        int requestsTracker = 0;
+        while(requestsTracker < size) {
+            int minDist = 1001;
+            for(int i = 0; i < size; i++) {
+                if(tempArr[i] != -1) {
+                    int currDist = Math.abs(starting_position - tempArr[i]);
+                    if(minDist > currDist) {
+                        minDist = currDist;
+                        nextIdx = i;
+                    }
+                }
+            }
+            tempArr[nextIdx] = -1;
+            currentDestination = requests[nextIdx];
+            if(requestsTracker == 0) {
+                leftMove = starting_position > currentDestination;
+            }
+
+            System.out.println(starting_position + " ---> " + currentDestination);
+
+            if(starting_position > currentDestination) {
+                for(int i = starting_position; i > currentDestination; i--) {
+                    if(!leftMove) {
+                        turnNum++;
+                        leftMove = true;
+                    }
+                    trackDist++;
+                }
+            } else if(starting_position < currentDestination) {
+                for(int i = starting_position; i < currentDestination; i++) {
+                    if(leftMove) {
+                        turnNum++;
+                        leftMove = false;
+                    }
+                    trackDist++;
+                }
+            }
+
+            starting_position = currentDestination;
+            requestsTracker++;
         }
 
         System.out.println("Total Distance: " + trackDist);
