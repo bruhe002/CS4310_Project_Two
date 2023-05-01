@@ -1,3 +1,5 @@
+package virtual_address;
+
 import java.util.Scanner;
 import java.lang.*;
 
