@@ -110,8 +110,10 @@ public class disk_scheduling {
                             sstf(initialPos, requestsArr, requestArrSize);
                             break;
                         case 3:
+                            scan(initialPos, requestsArr, requestArrSize);
                             break;
                         case 4:
+                            cscan(initialPos, requestsArr, requestArrSize);
                             break;
                         case 5:
                             break;
@@ -126,12 +128,12 @@ public class disk_scheduling {
         } while(!exitFlag);
     }
 
-    public static void fcfs(int starting_position, int[] requests, int size) {
+    public static void fcfs(int startingPosition, int[] requests, int size) {
         int trackDist = 0;
         int turnNum = 0;
         int currentDestination = 0;
         boolean leftMove;
-        if(starting_position > requests[0]) {
+        if(startingPosition > requests[0]) {
             leftMove = true;
         } else {
             leftMove = false;
@@ -139,47 +141,49 @@ public class disk_scheduling {
         for(int i = 0; i < size; i++) {
             currentDestination = requests[i];
 
-            System.out.println(starting_position + " ---> " + currentDestination);
-            if(starting_position > currentDestination) {
+            System.out.println(startingPosition + " ---> " + currentDestination);
+            if(startingPosition > currentDestination) {
                 if(!leftMove) {
                     System.out.println("Turn occurred");
                     turnNum++;
                     leftMove = true;
                 }
-                for(int j = starting_position; j > currentDestination; j--) {
+                for(int j = startingPosition; j > currentDestination; j--) {
                     trackDist++;
                 }
-            } else if(starting_position < currentDestination) {
+            } else if(startingPosition < currentDestination) {
                 if(leftMove) {
                     System.out.println("Turn occurred");
                     turnNum++;
                     leftMove = false;
                 }
-                for(int j = starting_position; j < currentDestination; j++) {
+                for(int j = startingPosition; j < currentDestination; j++) {
                     trackDist++;
                 }
             }
-            starting_position = currentDestination;
+            startingPosition = currentDestination;
         }
 
         System.out.println("Total Distance: " + trackDist);
         System.out.println("Total Direction Changes: " + turnNum);
     }
 
-    public static void sstf(int starting_position, int[] requests, int size) {
+    public static void sstf(int startingPosition, int[] requests, int size) {
         int trackDist = 0;
         int turnNum = 0;
         int currentDestination = 0;
         boolean leftMove = false;
         int nextIdx = 0;
         int[] tempArr = new int[size];
+
         System.arraycopy(requests, 0, tempArr, 0, size);
+
         int requestsTracker = 0;
         while(requestsTracker < size) {
             int minDist = 1001;
             for(int i = 0; i < size; i++) {
                 if(tempArr[i] != -1) {
-                    int currDist = Math.abs(starting_position - tempArr[i]);
+                    int currDist = Math.abs(startingPosition - tempArr[i]);
                     if(minDist > currDist) {
                         minDist = currDist;
                         nextIdx = i;
@@ -189,21 +193,21 @@ public class disk_scheduling {
             tempArr[nextIdx] = -1;
             currentDestination = requests[nextIdx];
             if(requestsTracker == 0) {
-                leftMove = starting_position > currentDestination;
+                leftMove = startingPosition > currentDestination;
             }
 
-            System.out.println(starting_position + " ---> " + currentDestination);
+            System.out.println(startingPosition + " ---> " + currentDestination);
 
-            if(starting_position > currentDestination) {
-                for(int i = starting_position; i > currentDestination; i--) {
+            if(startingPosition > currentDestination) {
+                for(int i = startingPosition; i > currentDestination; i--) {
                     if(!leftMove) {
                         turnNum++;
                         leftMove = true;
                     }
                     trackDist++;
                 }
-            } else if(starting_position < currentDestination) {
-                for(int i = starting_position; i < currentDestination; i++) {
+            } else if(startingPosition < currentDestination) {
+                for(int i = startingPosition; i < currentDestination; i++) {
                     if(leftMove) {
                         turnNum++;
                         leftMove = false;
@@ -212,7 +216,153 @@ public class disk_scheduling {
                 }
             }
 
-            starting_position = currentDestination;
+            startingPosition = currentDestination;
+            requestsTracker++;
+        }
+
+        System.out.println("Total Distance: " + trackDist);
+        System.out.println("Total Direction Changes: " + turnNum);
+    }
+
+    public static void scan(int startingPosition, int[] requests, int size) {
+        int trackDist = 0;
+        int turnNum = 0;
+        int currentDestination = 0;
+        boolean leftMove = true;
+        int nextIdx = 0;
+        int[] tempArr = new int[size];
+        int requestsTracker = 0;
+
+        System.arraycopy(requests, 0, tempArr, 0, size);
+
+        while(requestsTracker < size) {
+            int minDist = 1001;
+            for(int i = 0; i < size; i++) {
+                if(tempArr[i] != -1) {
+                    if(leftMove) {
+                        int currDist = Math.abs(startingPosition - tempArr[i]);
+                        if(tempArr[i] < startingPosition && minDist > currDist) {
+                            minDist = currDist;
+                            nextIdx = i;
+                        }
+                    } else {
+                        int currDist = Math.abs(startingPosition - tempArr[i]);
+                        if(tempArr[i] > startingPosition && minDist > currDist) {
+                            minDist = currDist;
+                            nextIdx = i;
+                        }
+                    }
+                }
+            }
+
+            tempArr[nextIdx] = -1;
+
+            if(minDist == 1001) {
+                currentDestination = 0;
+                requestsTracker--;
+            } else {
+                currentDestination = requests[nextIdx];
+            }
+
+            System.out.println(startingPosition + " ---> " + currentDestination);
+
+            if(startingPosition > currentDestination) {
+                for(int i = startingPosition; i > currentDestination; i--) {
+                    trackDist++;
+                }
+            } else if(startingPosition < currentDestination) {
+                for(int i = startingPosition; i < currentDestination; i++) {
+                    trackDist++;
+                }
+            }
+
+            startingPosition = currentDestination;
+            if(startingPosition == 0) {
+                turnNum++;
+                leftMove = false;
+            }
+            requestsTracker++;
+        }
+
+        System.out.println("Total Distance: " + trackDist);
+        System.out.println("Total Direction Changes: " + turnNum);
+    }
+
+    public static void cscan(int startingPosition, int[] requests, int size) {
+        int trackDist = 0;
+        int turnNum = 0;
+        int currentDestination = 0;
+        boolean leftMove = false;
+        boolean cycle = false;
+        int nextIdx = 0;
+        int[] tempArr = new int[size];
+        int requestsTracker = 0;
+
+        System.arraycopy(requests, 0, tempArr, 0, size);
+
+        while(requestsTracker < size) {
+            int minDist = 1001;
+            if(startingPosition == 0 && !cycle && requestsTracker != 0) {
+                currentDestination = 4999;
+                cycle = true;
+                requestsTracker--;
+            } else if(startingPosition == 4999 && !cycle && requestsTracker != 0) {
+                currentDestination = 0;
+                cycle = true;
+                requestsTracker--;
+            } else {
+                for(int i = 0; i < size; i++) {
+                    if(tempArr[i] != -1) {
+                        if(leftMove) {
+                            int currDist = Math.abs(startingPosition - tempArr[i]);
+                            if(tempArr[i] < startingPosition && minDist > currDist) {
+                                minDist = currDist;
+                                nextIdx = i;
+                            }
+                        } else {
+                            int currDist = Math.abs(startingPosition - tempArr[i]);
+                            if(tempArr[i] > startingPosition && minDist > currDist) {
+                                minDist = currDist;
+                                nextIdx = i;
+                            }
+                        }
+                    }
+                }
+
+                tempArr[nextIdx] = -1;
+
+                if(minDist == 1001) {
+                    if(leftMove) {
+                        currentDestination = 0;
+                    } else {
+                        currentDestination = 4999;
+                    }
+                    requestsTracker--;
+                } else {
+                    currentDestination = requests[nextIdx];
+                }
+            }
+
+            System.out.println(startingPosition + " ---> " + currentDestination);
+
+            if(startingPosition > currentDestination) {
+                for(int i = startingPosition; i > currentDestination; i--) {
+                    trackDist++;
+                }
+            } else if(startingPosition < currentDestination) {
+                for(int i = startingPosition; i < currentDestination; i++) {
+                    trackDist++;
+                }
+            }
+
+            startingPosition = currentDestination;
+            if(startingPosition == 0) {
+                turnNum++;
+                leftMove = false;
+            } else if(startingPosition == 4999) {
+                turnNum++;
+                leftMove = true;
+            }
             requestsTracker++;
         }
 
