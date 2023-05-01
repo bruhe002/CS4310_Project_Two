@@ -116,6 +116,7 @@ public class disk_scheduling {
                             cscan(initialPos, requestsArr, requestArrSize);
                             break;
                         case 5:
+                            exitFlag = true;
                             break;
                         default:
                             throw new Exception("ERROR: Not a valid option");
@@ -144,7 +145,7 @@ public class disk_scheduling {
             System.out.println(startingPosition + " ---> " + currentDestination);
             if(startingPosition > currentDestination) {
                 if(!leftMove) {
-                    System.out.println("Turn occurred");
+//                    System.out.println("Turn occurred");
                     turnNum++;
                     leftMove = true;
                 }
@@ -153,7 +154,7 @@ public class disk_scheduling {
                 }
             } else if(startingPosition < currentDestination) {
                 if(leftMove) {
-                    System.out.println("Turn occurred");
+//                    System.out.println("Turn occurred");
                     turnNum++;
                     leftMove = false;
                 }
