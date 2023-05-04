@@ -30,7 +30,6 @@ public class hard_disk_logic_block {
                 int sectorNum = input.nextInt();
                 input.nextLine();
 
-
                 int secPerCyl = sectorNum * trackNum;
                 int remainingBlocks = logicBlockNum;
 
